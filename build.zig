@@ -41,10 +41,13 @@ pub fn build(b: *std.Build) void {
     const upstream = b.dependency("upstream", .{});
     lib.root_module.addIncludePath(upstream.path("src"));
     lib.installHeader(upstream.path("src/nanosvg.h"), "nanosvg.h");
+    lib.installHeader(upstream.path("src/nanosvgrast.h"), "nanosvgrast.h");
 
     const c_source_code =
         \\#define NANOSVG_IMPLEMENTATION
         \\#include <nanosvg.h>
+        \\#define NANOSVGRAST_IMPLEMENTATION
+        \\#include <nanosvgrast.h>
     ;
     const c_source_file_step = b.addWriteFiles();
     const c_source_path = c_source_file_step.add("c.c", c_source_code);
