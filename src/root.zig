@@ -1,6 +1,7 @@
 const std = @import("std");
 const c = @cImport({
     @cInclude("nanosvg.h");
+    @cInclude("nanosvgrast.h");
 });
 
 pub const PaintType = enum(i8) {
@@ -140,3 +141,28 @@ pub fn parseFromFile(filename: [:0]const u8, units: [:0]const u8, dpi: f32) *Ima
 pub fn parse(input: [:0]u8, units: [:0]const u8, dpi: f32) *Image {
     return @ptrCast(c.nsvgParse(input.ptr, units.ptr, dpi));
 }
+
+pub const Rasterizer = opaque {};
+
+pub fn createRasterizer() *Rasterizer {
+    return @ptrCast(c.nsvgCreateRasterizer());
+}
+
+pub fn deleteRasterizer(r: *Rasterizer) void {
+    c.nsvgDeleteRasterizer(@ptrCast(r));
+}
+
+pub fn rasterize(
+    r: *Rasterizer,
+    image: *Image,
+    tx: f32,
+    ty: f32,
+    scale: f32,
+    dst: [*]u8,
+    w: i32,
+    h: i32,
+    stride: i32,
+) void {
+    c.nsvgRasterize(@ptrCast(r), @ptrCast(image), tx, ty, scale, dst, w, h, stride);
+}
+
